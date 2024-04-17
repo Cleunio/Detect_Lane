@@ -1,0 +1,29 @@
+import os
+import cv2
+
+# Função para percorrer todas as imagens em uma pasta e suas subpastas
+def process_images_in_folder(folder):
+    # Lista de arquivos e subpastas no diretório atual
+    for item in os.listdir(folder):
+        item_path = os.path.join(folder, item)
+        # Se o item for um arquivo
+        if os.path.isfile(item_path):
+            # Verifique se o arquivo é uma imagem (você pode adicionar mais extensões, se necessário)
+            if item_path.endswith('.jpg') or item_path.endswith('.jpeg') or item_path.endswith('.png'):
+                # Carregar a imagem
+                image = cv2.imread(item_path)
+                # Converter de BGR para RGB
+                image_rgb = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
+                # salvar a imagem com um novo nome, você pode fazer:
+                new_image_path = item_path.replace('.jpg', '_rgb.jpg')
+                cv2.imwrite(new_image_path, image_rgb)
+        # Se o item for uma pasta
+        elif os.path.isdir(item_path):
+            # Chamar recursivamente a função para processar as imagens na subpasta
+            process_images_in_folder(item_path)
+
+# Diretório raiz onde estão localizadas as subpastas
+root_dir = '/content/dados_extraidos/TUSimple/train_set/clips'
+
+# Chamada inicial para processar as imagens no diretório raiz
+process_images_in_folder(root_dir)

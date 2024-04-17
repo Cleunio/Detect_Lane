@@ -1,0 +1,44 @@
+import os
+import cv2
+import matplotlib.pyplot as plt
+
+# Função para pré-processar uma imagem
+def preprocess_image(image):
+    # Convert to grayscale
+    gray = cv2.cvtColor(image, cv2.COLOR_RGB2GRAY)
+
+    # Apply Gaussian blur
+    blur = cv2.GaussianBlur(gray, (5, 5), 0)
+
+    # Canny edge detection
+    edges = cv2.Canny(blur, 50, 150)
+
+    return edges
+
+# Função para percorrer todas as imagens em uma pasta e suas subpastas
+def process_images_in_folder(folder):
+    # Lista de arquivos e subpastas no diretório atual
+    for item in os.listdir(folder):
+        item_path = os.path.join(folder, item)
+        # Se o item for um arquivo
+        if os.path.isfile(item_path):
+            # Verifique se o arquivo é uma imagem com extensão _rgb
+            if item_path.endswith('_rgb.jpg') or item_path.endswith('_rgb.jpeg') or item_path.endswith('_rgb.png'):
+                # Carregar a imagem
+                image = cv2.imread(item_path)
+                # Pré-processar a imagem
+                edges = preprocess_image(image)
+                # Exibir o resultado do pré-processamento
+                #plt.imshow(edges, cmap='gray')
+                #plt.title('Edges Detected')
+                #plt.show()
+        # Se o item for uma pasta
+        elif os.path.isdir(item_path):
+            # Chamar recursivamente a função para processar as imagens na subpasta
+            process_images_in_folder(item_path)
+
+# Diretório raiz onde estão localizadas as subpastas
+root_dir = '/content/dados_extraidos/TUSimple/train_set/clips'
+
+# Chamada inicial para processar as imagens no diretório raiz
+process_images_in_folder(root_dir)
